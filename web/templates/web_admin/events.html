@@ -1,0 +1,97 @@
+{% extends 'web_admin/base.html' %}
+{% block content %}
+{% csrf_token %}
+<div class="container mt-4">
+    <div class="row align-items-start">
+        <div class="col">
+            <h3>Events</h3>
+        </div>
+        <div class="col text-end">
+            <a href="{% url 'add_event' %}" class="btn btn-success mb-2">
+                <i class="fas fa-plus"></i> Add Event
+            </a>
+        </div>
+    </div>
+    <table id="events-table" class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Event Name</th>
+                <th>Enabled</th>
+                <th>Expiry</th>
+            </tr>
+        </thead>
+    </table>
+</div>
+<script>
+    $(document).ready(function () {
+        const table = $('#events-table').DataTable({
+            processing: true,
+            serverSide: true,
+            ajax: {
+                url: '{% url "events_data" %}',
+                type: 'POST'
+            },
+            pageLength: 25,
+            lengthMenu: [25, 50, 75, 100],
+            ordering: true,
+            columns: [
+                { data: 'id' },
+                { data: 'name' },
+                { data: 'enabled' },
+                { data: 'expiry' },
+                {
+                    data: null,
+                    orderable: false,
+                    searchable: false,
+                    className: "text-center",
+                    title: `<i class="fas fa-pen-to-square"></i>`,
+                    render: function (data, type, row) {
+                        return `
+                            <a href="/events/${row.id}/edit/" class="btn btn-sm btn-outline-primary me-1" data-bs-toggle="tooltip" title="Edit Event">
+                                <i class="fas fa-pen"></i>
+                            </a>
+                            <a href="#" class="btn btn-sm btn-outline-danger delete-event" data-id="${row.id}" data-name="${row.name}" data-bs-toggle="tooltip" title="Delete Event">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        `;
+                    }
+                }
+            ],
+            drawCallback: function () {
+                const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+                tooltipTriggerList.forEach(function (el) {
+                    new bootstrap.Tooltip(el);
+                });
+            }
+        });
+        $('#events-table').on('click', '.delete-event', function (e) {
+            e.preventDefault();
+            const eventId = $(this).data('id');
+            const name = $(this).data('name');
+            showConfirmationModal({
+                is_warning: true,
+                title: "Delete Event",
+                message: `Are you sure you want to delete event ${name}(${eventId})?`,
+                data: { event_id: eventId },
+                onConfirm: (data, modal) => {
+                    $.ajax({
+                        url: `/events/${data.event_id}/delete/`,
+                        type: 'POST',
+                        headers: { 'X-CSRFToken': '{{ csrf_token }}' },
+                        success: function () {
+                            table.ajax.reload(null, false);
+                            showToast("Event deleted successfully");
+                            modal.hide();
+                        },
+                        error: function () {
+                            showToast(data.error || "Failed to delete event", false);
+                            modal.hide();
+                        }
+                    });
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

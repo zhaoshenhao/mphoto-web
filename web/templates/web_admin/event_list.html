@@ -1,0 +1,62 @@
+{% extends 'web_admin/base.html' %}
+{% block content %}
+{% csrf_token %}
+<div class="container mt-4">
+    <div class="row align-items-start">
+        <div class="col">
+            <h3>My Events</h3>
+        </div>
+    </div>
+    <table id="events-table" class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Event Name</th>
+                <th>Enabled</th>
+                <th>Expiry</th>
+            </tr>
+        </thead>
+    </table>
+</div>
+<script>
+    $(document).ready(function () {
+        const table = $('#events-table').DataTable({
+            processing: true,
+            serverSide: true,
+            ajax: {
+                url: '{% url "events_data" %}',
+                type: 'POST'
+            },
+            pageLength: 25,
+            lengthMenu: [25, 50, 75, 100],
+            ordering: true,
+            columns: [
+                { data: 'id' },
+                { data: 'name' },
+                { data: 'enabled' },
+                { data: 'expiry' },
+                {
+                    data: null,
+                    orderable: false,
+                    searchable: false,
+                    className: "text-center",
+                    title: `<i class="fas fa-pen-to-square"></i>`,
+                    render: function (data, type, row) {
+                        return `
+                            <a href="/events/${row.id}/view/" class="btn btn-sm btn-outline-primary me-1" data-bs-toggle="tooltip" title="View Event">
+                                <i class="fas fa-gauge"></i>
+                            </a>
+                        `;
+                    }
+                }
+            ],
+            drawCallback: function () {
+                const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+                tooltipTriggerList.forEach(function (el) {
+                    new bootstrap.Tooltip(el);
+                });
+            }
+        });
+    });
+</script>
+{% endblock %}

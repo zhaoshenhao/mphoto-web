@@ -1,0 +1,135 @@
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+h1 {
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+.tabs button {
+    padding: 10px 20px;
+    margin-right: 10px;
+    border: none;
+    background: #ddd;
+    cursor: pointer;
+}
+.tabs button.active {
+    background: #007bff;
+    color: white;
+}
+.tab-content {
+    margin-top: 20px;
+}
+#invite-code, button {
+    padding: 8px;
+    margin-right: 10px;
+}
+.face-previews {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-top: 20px;
+}
+.face-unit {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.face-box {
+    width: 215px; /* 358px * 0.6 */
+    height: 265px; /* 441px * 0.6 */
+    border: 1px solid #ccc;
+    position: relative;
+    overflow: hidden;
+}
+.face-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+.diagonal {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to top right, transparent 49%, black 50%, transparent 51%);
+}
+.face-controls {
+    display: flex;
+    justify-content: space-between;
+    width: 214.8px;
+    margin-top: 5px;
+}
+.face-controls label {
+    display: flex;
+    align-items: center;
+}
+.crop-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px;
+}
+.crop-area input[type="file"] {
+    margin-bottom: 10px;
+    padding: 8px;
+    font-size: 14px;
+}
+.crop-area img {
+    max-height: 800px;
+}
+.thumbs-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-top: 20px;
+}
+.thumbs-grid img {
+    width: 100%;
+}
+.thumbs-grid input {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+.controls {
+    margin-top: 20px;
+}
+#bib-info p.expired {
+    color: red;
+}
+#bib-info p.valid {
+    color: green;
+}
+.select2-container {
+    width: 300px !important; /* Fixed width for sufficient size */
+}
+.select2-container .select2-selection--single {
+    height: 38px;
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem;
+}
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+    line-height: 38px;
+    color: #495057;
+}
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+    height: 38px;
+}
+.select2-container--default .select2-selection--single .select2-selection__clear {
+    margin-right: 10px;
+}
+.select2-container--bootstrap-5 .select2-selection--single {
+    background-color: #fff;
+}
+.select2-container--bootstrap-5 .select2-selection__placeholder {
+    color: #6c757d; /* Match Bootstrap placeholder color */
+}
+.select2-container--bootstrap-5 .select2-dropdown {
+    width: 300px !important; /* Match input width */
+}
+.select2-wrapper {
+    max-width: 300px; /* Constrain wrapper to match Select2 */
+}

@@ -1,0 +1,99 @@
+{% load static %}
+{% csrf_token %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MPhoto</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
+    <script src="/static/script.js"></script>
+</head>
+<body>
+<div class="container">
+    <h1>MPhoto</h1>
+    <div class="tabs">
+        <button onclick="showTab(0)" id="tab1" class="active">Face Input</button>
+        <button onclick="showTab(1)" id="tab2" disabled>Thumbnails</button>
+    </div>
+
+    <!-- Bib and Face Input -->
+    <div class="tab-content" id="tab-content-0">
+        <div class="row mb-3 align-items-center">
+            <div class="col">
+                <div class="d-flex align-items-center">
+                    <label for="event-select" class="form-label me-2 mb-0" style="min-width: 100px;">Event:</label>
+                    <select id="event-select" class="form-select w-auto ms-auto" required>
+                        <option value="">Select Event...</option>
+                        {% for event in events %}
+                        <option value="{{ event.id }}">{{ event.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="col d-flex align-items-center">
+                <label for="bib-number" class="form-label me-2 mb-0" style="min-width: 100px;">Bib Number</label>
+                <input type="text" id="bib-number" class="form-control w-auto" placeholder="Enter 1-6 digit number"
+                       maxlength="6" pattern="\d{1,6}">
+            </div>
+            <div class="col text-end">
+                <button class="btn btn-primary" onclick="submitFaces()" id="submit-faces">Submit</button>
+            </div>
+        </div>
+        <hr class="divider">
+        <div class="face-previews">
+            <div class="face-unit">
+                <div class="face-box" id="face-0">
+                    <div class="diagonal"></div>
+                </div>
+                <div class="face-controls">
+                    <button class="copy-btn btn btn-outline-success btn-sm" id="copy-0" title="Copy the selected face" disabled>Copy</button>
+                    <label class="form-check-label"><input class="form-check-input" type="checkbox" id="use-0" title="Use it to search photo" disabled> Use</label>
+                </div>
+            </div>
+            <div class="face-unit">
+                <div class="face-box" id="face-1">
+                    <div class="diagonal"></div>
+                </div>
+                <div class="face-controls">
+                    <button class="copy-btn btn btn-outline-success btn-sm" id="copy-1" title="Copy the selected face" disabled>Copy</button>
+                    <label class="form-check-label"><input class="form-check-input" type="checkbox" id="use-1" title="Use it to search photo" disabled> Use</label>
+                </div>
+            </div>
+            <div class="face-unit">
+                <div class="face-box" id="face-2">
+                    <div class="diagonal"></div>
+                </div>
+                <div class="face-controls">
+                    <button class="copy-btn btn btn-outline-success btn-sm" id="copy-2" title="Copy the selected face" disabled>Copy</button>
+                    <label class="form-check-label"><input class="form-check-input" type="checkbox" id="use-2" title="Use it to search photo" disabled> Use</label>
+                </div>
+            </div>
+        </div>
+        <hr class="divider">
+        <div class="crop-area">
+            <input type="file" id="image-input" accept="image/*" onchange="loadImage()">
+            <img id="crop-image" style="display: none;">
+        </div>
+    </div>
+
+    <!-- Thumbnails -->
+    <div class="tab-content" id="tab-content-1" style="display: none;">
+        <p id="total-photos" class="total-photos"></p>
+        <hr class="divider">
+        <div id="thumbs-grid" class="thumbs-grid"></div>
+        <hr class="divider">
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,13 @@
+{% extends 'web_admin/base.html' %}
+{% block title %}{{ page_title|default:"Cloud Storage" }}{% endblock %}
+{% block content %}
+{% load crispy_forms_tags %}
+<div class="container" style="min-width: 400px; max-width: 600px;">
+    <h3>{{ page_title|default:"Cloud Storage" }}</h3>
+    <form method="post">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <button type="submit" class="btn btn-primary btn-block mb-4">{{ button_name|default:"Save"}}</button>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,32 @@
+{% extends 'web_admin/base.html' %}
+{% block title %}Event Dashboard: {{ event.name }}{% endblock %}
+{% block content %}
+<div class="container mt-4">
+    <h2>Event: {{ event.name }}</h2>
+    <hr>
+
+    <h4>Cloud Storage URLs</h4>
+    <ul>
+        {% for url in cloud_urls %}
+            <li><a href="{{ url }}" target="_blank">{{ url }}</a></li>
+        {% empty %}
+            <li>No cloud storage URLs available.</li>
+        {% endfor %}
+    </ul>
+
+    <h4>Bib Summary</h4>
+    <ul>
+        <li>Enabled: {{ bib_enabled }}</li>
+        <li>Disabled: {{ bib_disabled }}</li>
+        <li>Total: {{ bib_total }}</li>
+    </ul>
+
+    <h4>Photo Stats</h4>
+    <ul>
+        <li>Total Photos: {{ photo_count }}</li>
+        <li>Total Photos Size: {{ photo_total_size }}</li>
+        <li>Bib Photos: {{ bib_photo_count }}</li>
+        <li>Face Photos: {{ face_photo_count }}</li>
+    </ul>
+</div>
+{% endblock %}

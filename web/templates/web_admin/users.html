@@ -1,0 +1,129 @@
+{% extends 'web_admin/base.html' %}
+{% block content %}
+{% csrf_token %}
+<div class="container mt-4">
+    <div class="row align-items-start">
+        <div class="col">
+            <h3>Users</h3>
+        </div>
+        <div class="col text-end">
+            <a href="{% url 'add_user' %}" class="btn btn-success mb-3">
+                <i class="fas fa-plus"></i> Add User
+            </a>
+        </div>
+    </div>
+    <table id="users-table" class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Email</th>
+                <th>Name</th>
+                <th>Phone</th>
+                <th>Desc.</th>
+                <th>Role</th>
+                <th>Api Key</th>
+                <th>Enabled</th>
+                <th>Last Login</th>
+                <th>Created At</th>
+                <th>Last Update</th>
+            </tr>
+        </thead>
+    </table>
+</div>
+<script>
+    $(document).ready(function () {
+        const table = $('#users-table').DataTable({
+            processing: true,
+            serverSide: true,
+            ajax: {
+                url: '{% url "users_data" %}',
+                type: 'POST',
+                headers: { 'X-CSRFToken': '{{ csrf_token }}' }
+            },
+            pageLength: 25,
+            lengthMenu: [25, 50, 75, 100],
+            ordering: true,
+            columns: [
+                { data: "id" },
+                { data: "email" },
+                { data: "name" },
+                { data: "phone" },
+                {
+                    data: 'description',
+                    orderable: false,
+                    render: function (data) {
+                        return `<i class="fas fa-info-circle text-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="${data || 'No description'}"></i>`;
+                    }
+                },
+                { data: "role" },
+                {
+                    data: 'api_key',
+                    orderable: false,
+                    render: function (data) {
+                        return `<i class="fas fa-info-circle text-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="${data || 'No Api Key'}"></i>`;
+                    }
+                },
+                { data: "enabled" },
+                { data: "last_login" },
+                { data: "created_timestamp" },
+                { data: "updated_timestamp" },
+                {
+                    data: null,
+                    orderable: false,
+                    searchable: false,
+                    className: "text-center th-lg",
+                    title: `<i class="fas fa-pen-to-square"></i>`,
+                    render: function (data, type, row) {
+                        return `
+                        <div class="d-flex gap-1 flex-nowrap">
+                            <a href="/users/${row.id}/edit/" class="btn btn-sm btn-outline-primary" data-bs-toggle="tooltip" title="Edit User">
+                                <i class="fas fa-pen"></i>
+                            </a>
+                            <a href="/users/${row.id}/change-password/" class="btn btn-sm btn-outline-warning" title="Reset Password">
+                                <i class="fas fa-key"></i>
+                            </a>
+                            <a href="#" class="btn btn-sm btn-outline-danger delete-user" data-id="${row.id}" data-email="${row.email}" data-bs-toggle="tooltip" title="Delete User">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        </div>
+                        `;
+                    }
+                }
+            ],
+            drawCallback: function () {
+                const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+                tooltipTriggerList.forEach(function (el) {
+                    new bootstrap.Tooltip(el);
+                });
+            }
+        });
+        $('#users-table').on('click', '.delete-user', function (e) {
+            e.preventDefault();
+            const userId = $(this).data('id');
+            const email = $(this).data('email');
+            showConfirmationModal({
+                is_warning: true,
+                title: "Delete User",
+                message: `Are you sure you want to delete user ${email}(${userId})?`,
+                data: { user_id: userId },
+                onConfirm: (data, modal) => {
+                    $.ajax({
+                        url: `/users/${data.user_id}/delete/`,
+                        type: 'POST',
+                        headers: { 'X-CSRFToken': '{{ csrf_token }}' },
+                        success: function () {
+                            table.ajax.reload(null, false);
+                            showToast("User deleted successfully");
+                            modal.hide();
+                        },
+                        error: function () {
+                            showToast(data.error || "Failed to delete user", false);
+                            modal.hide();
+                        }
+                    });
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}
