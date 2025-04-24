@@ -14,6 +14,7 @@ SECRET_KEY = 'django-insecure-x5g5me=c+ajjmk3_n$t&l82q8^x^ens!442fa4s24s0$bxq*jq
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+#ALLOWED_HOSTS = ['0.0.0.0', '127.0.0.1']
 ALLOWED_HOSTS = []
 
 
@@ -68,6 +69,9 @@ WSGI_APPLICATION = 'mphoto.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
+        'OPTIONS': {
+            'options': '-c search_path=mphoto'
+        },
         'NAME': 'mphoto_db',
         'USER': 'mphoto_user',
         'PASSWORD': 'mphoto',
@@ -120,7 +124,6 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
