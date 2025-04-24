@@ -113,7 +113,7 @@ async function submitFaces() {
         images: images
     };
 
-    const response = await fetch(`api/search/`, {
+    const response = await fetch(`/mphoto/api/search/`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)

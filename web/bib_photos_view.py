@@ -61,8 +61,8 @@ def bib_photos_data(request):
         'photo_id': bp.photo_id,
         'confidence': f"{bp.confidence:.2f}",
         'photo__name': bp.photo.name,
-        'photo__thumb_link': bp.photo.thumb_link,
-        'photo__content_link': bp.photo.content_link,
+        'photo__thumb_link': f'https://drive.google.com/thumbnail?id={bp.photo.gdid}&sz=w300',
+        'photo__content_link': f'https://drive.google.com/file/d/{bp.photo.gdid}/view',
         'photo__modified_time': bp.photo.modified_time,
         'photo__last_updated': bp.photo.last_updated.strftime('%Y-%m-%d %H:%M:%S'),
     } for bp in queryset]

@@ -127,7 +127,7 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
-STATIC_URL = '/static/'
+STATIC_URL = '/mphoto/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'web/static'),
 ]
@@ -137,9 +137,9 @@ STATICFILES_DIRS = [
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'web.User'
-LOGIN_URL = '/login/'
-LOGIN_REDIRECT_URL = '/dashboard/'
-LOGOUT_REDIRECT_URL = '/login/'
+LOGIN_URL = '/mphoto/login/'
+LOGIN_REDIRECT_URL = '/mphoto/dashboard/'
+LOGOUT_REDIRECT_URL = '/mphoto/login/'
 SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
