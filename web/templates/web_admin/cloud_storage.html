@@ -73,11 +73,8 @@
                     title: `<i class="fas fa-pen-to-square"></i>`,
                     render: function (data, type, row) {
                         return `
-                            <a href="/cloud_storage/${row.id}/edit/" class="btn btn-sm btn-outline-primary me-1" data-bs-toggle="tooltip" title="Edit Cloud Storage">
+                            <a href="/mphoto/cloud_storage/${row.id}/edit/" class="btn btn-sm btn-outline-primary me-1" data-bs-toggle="tooltip" title="Edit Cloud Storage">
                                 <i class="fas fa-pen"></i>
-                            </a>
-                            <a href="#" class="btn btn-sm btn-outline-primary refresh-cs" data-id="${row.id}" data-url="${row.url}" data-bs-toggle="tooltip" title="Refresh photo from cloud storage">
-                                <i class="fa-solid fa-list-check"></i>
                             </a>
                             <a href="#" class="btn btn-sm btn-outline-danger delete-cs" data-id="${row.id}" data-url="${row.url}" data-bs-toggle="tooltip" title="Delete Cloud Storage">
                                 <i class="fas fa-trash"></i>
@@ -107,7 +104,7 @@
                 data: { cloud_storage_id: csId },
                 onConfirm: (data, modal) => {
                     $.ajax({
-                        url: `/cloud_storage/${data.cloud_storage_id}/delete/`,
+                        url: `/mphoto/cloud_storage/${data.cloud_storage_id}/delete/`,
                         type: 'POST',
                         headers: { 'X-CSRFToken': '{{ csrf_token }}' },
                         success: function () {
@@ -116,33 +113,6 @@
                             modal.hide();
                         },
                         error: function () {
-                            showToast(data.error || "Failed to delete Cloud storage", false);
-                            modal.hide();
-                        }
-                    });
-                }
-            });
-        });
-        $('#cs-table').on('click', '.refresh-cs', function (e) {
-            e.preventDefault();
-            const csId = $(this).data('id');
-            const url = $(this).data('url');
-            showConfirmationModal({
-                is_warning: true,
-                title: "Refresh Cloud Storage",
-                message: `Are you sure you want to refresh photo data from cloud storage ${csId}:\n${url}?\nIt will run in background.\nPlease check task detail from app log.`,
-                data: { cloud_storage_id: csId },
-                onConfirm: (data, modal) => {
-                    $.ajax({
-                        url: `/cloud_storage/${data.cloud_storage_id}/refresh/`,
-                        type: 'POST',
-                        headers: { 'X-CSRFToken': '{{ csrf_token }}' },
-                        success: function (data) {
-                            showToast(data.message || "Cloud storage deleted successfully");
-                            modal.hide();
-                            window.open(`/task_run/${data.task_id}/view/`, '_blank');
-                        },
-                        error: function (data) {
                             showToast(data.error || "Failed to delete Cloud storage", false);
                             modal.hide();
                         }

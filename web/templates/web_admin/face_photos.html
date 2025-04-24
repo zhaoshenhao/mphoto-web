@@ -112,7 +112,7 @@
                 data: { face_photo_id: rowId },
                 onConfirm: (data, modal) => {
                     $.ajax({
-                        url: `/face_photos/${data.face_photo_id}/delete/`,
+                        url: `/mphoto/face_photos/${data.face_photo_id}/delete/`,
                         type: 'POST',
                         headers: { 'X-CSRFToken': '{{ csrf_token }}' },
                         success: function () {

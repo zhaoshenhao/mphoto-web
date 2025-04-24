@@ -121,7 +121,7 @@
                 data: { photo_id: photoId },
                 onConfirm: (data, modal) => {
                     $.ajax({
-                        url: `/photos/${data.photo_id}/delete/`,
+                        url: `/mphoto/photos/${data.photo_id}/delete/`,
                         type: 'POST',
                         headers: { 'X-CSRFToken': '{{ csrf_token }}' },
                         success: function () {

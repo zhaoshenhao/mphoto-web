@@ -76,10 +76,10 @@
                     render: function (data, type, row) {
                         return `
                         <div class="d-flex gap-1 flex-nowrap">
-                            <a href="/users/${row.id}/edit/" class="btn btn-sm btn-outline-primary" data-bs-toggle="tooltip" title="Edit User">
+                            <a href="/mphoto/users/${row.id}/edit/" class="btn btn-sm btn-outline-primary" data-bs-toggle="tooltip" title="Edit User">
                                 <i class="fas fa-pen"></i>
                             </a>
-                            <a href="/users/${row.id}/change-password/" class="btn btn-sm btn-outline-warning" title="Reset Password">
+                            <a href="/mphoto/users/${row.id}/change-password/" class="btn btn-sm btn-outline-warning" title="Reset Password">
                                 <i class="fas fa-key"></i>
                             </a>
                             <a href="#" class="btn btn-sm btn-outline-danger delete-user" data-id="${row.id}" data-email="${row.email}" data-bs-toggle="tooltip" title="Delete User">
@@ -108,7 +108,7 @@
                 data: { user_id: userId },
                 onConfirm: (data, modal) => {
                     $.ajax({
-                        url: `/users/${data.user_id}/delete/`,
+                        url: `/mphoto/users/${data.user_id}/delete/`,
                         type: 'POST',
                         headers: { 'X-CSRFToken': '{{ csrf_token }}' },
                         success: function () {

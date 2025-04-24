@@ -114,7 +114,7 @@
                 data: { bib_photo_id: rowId },
                 onConfirm: (data, modal) => {
                     $.ajax({
-                        url: `/bib_photos/${data.bib_photo_id}/delete/`,
+                        url: `/mphoto/bib_photos/${data.bib_photo_id}/delete/`,
                         type: 'POST',
                         headers: { 'X-CSRFToken': '{{ csrf_token }}' },
                         success: function () {

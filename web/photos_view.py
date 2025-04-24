@@ -59,7 +59,7 @@ def photos_data(request):
         'id': p.id,
         'name': p.name,
         'gdid': p.gdid,
-        'full': f"https://drive.google.com/uc?id={p.gdid}=download",
+        'full': f"https://drive.google.com/uc?id={p.gdid}&export=download",
         'size': p.size,
         'status': Photo.STATUS_CHOICES[p.status][1],
         'modified_time': p.modified_time.strftime('%Y-%m-%d %H:%M:%S'),

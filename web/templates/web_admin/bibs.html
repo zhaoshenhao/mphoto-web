@@ -73,7 +73,7 @@
                     title: `<i class="fas fa-pen-to-square"></i>`,
                     render: function (data, type, row) {
                         return `
-                            <a href="/bibs/${row.id}/edit/" class="btn btn-sm btn-outline-primary me-1" data-bs-toggle="tooltip" title="Edit Bib">
+                            <a href="/mphoto/bibs/${row.id}/edit/" class="btn btn-sm btn-outline-primary me-1" data-bs-toggle="tooltip" title="Edit Bib">
                                 <i class="fas fa-pen"></i>
                             </a>
                             <a href="#" class="btn btn-sm btn-outline-danger delete-bib" data-id="${row.id}" data-name="${row.name}" data-bs-toggle="tooltip" title="Delete Bib">
@@ -104,7 +104,7 @@
                 data: { bib_id: bibId },
                 onConfirm: (data, modal) => {
                     $.ajax({
-                        url: `/bibs/${data.bib_id}/delete/`,
+                        url: `/mphoto/bibs/${data.bib_id}/delete/`,
                         type: 'POST',
                         headers: { 'X-CSRFToken': '{{ csrf_token }}' },
                         success: function () {

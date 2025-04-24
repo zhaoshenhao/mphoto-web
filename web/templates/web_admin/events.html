@@ -48,7 +48,7 @@
                     title: `<i class="fas fa-pen-to-square"></i>`,
                     render: function (data, type, row) {
                         return `
-                            <a href="/events/${row.id}/edit/" class="btn btn-sm btn-outline-primary me-1" data-bs-toggle="tooltip" title="Edit Event">
+                            <a href="/mphoto/events/${row.id}/edit/" class="btn btn-sm btn-outline-primary me-1" data-bs-toggle="tooltip" title="Edit Event">
                                 <i class="fas fa-pen"></i>
                             </a>
                             <a href="#" class="btn btn-sm btn-outline-danger delete-event" data-id="${row.id}" data-name="${row.name}" data-bs-toggle="tooltip" title="Delete Event">
@@ -76,7 +76,7 @@
                 data: { event_id: eventId },
                 onConfirm: (data, modal) => {
                     $.ajax({
-                        url: `/events/${data.event_id}/delete/`,
+                        url: `/mphoto/events/${data.event_id}/delete/`,
                         type: 'POST',
                         headers: { 'X-CSRFToken': '{{ csrf_token }}' },
                         success: function () {
