@@ -123,8 +123,6 @@ def api_save_photos(request, cloud_storage_id):
                 name = f['name'],
                 size = f['size'],
                 gdid = f['gdid'],
-                thumb_link = f['thumb_link'],
-                web_content_link = f['web_content_link'],
                 created_time = f['created_time'],
                 modified_time = f['modified_time'],
                 cloud_storage = cloud_storage,
@@ -150,9 +148,7 @@ def api_update_photos(request, cloud_storage_id):
             Photo.objects.filter(gdid=c['gdid']).update(
                 status=2, # Need update
                 size=c['size'],
-                modified_time=c['modified_time'],
-                thumb_link=c['thumb_link'],
-                web_content_link=c['web_content_link']
+                modified_time=c['modified_time']
             )
         updated_count = len(changed)
         return JsonResponse({'message': f'{updated_count} photos changed status to -1'}, status=200)
