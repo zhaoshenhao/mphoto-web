@@ -9,6 +9,7 @@ from django.views.decorators.http import require_POST
 from .models import Event, CloudStorage, Bib, Photo, BibPhoto, FacePhoto, EventManager
 from .forms import EventForm
 from .utils.auth import user_has_event_permission
+from .utils.tools import human_file_size, format_big_integer
 
 
 logger = logging.getLogger(__name__)
@@ -157,13 +158,13 @@ def view_event(request, event_id):
     context = {
         'event': event,
         'cloud_urls': cloud_urls,
-        'bib_total': bib_total,
-        'bib_enabled': bib_enabled,
-        'bib_disabled': bib_disabled,
-        'photo_count': photo_stats['total_count'],
-        'photo_total_size': photo_stats['total_size'],
-        'bib_photo_count': bib_photo_count,
-        'face_photo_count': face_photo_count
+        'bib_total': format_big_integer(bib_total),
+        'bib_enabled': format_big_integer(bib_enabled),
+        'bib_disabled': format_big_integer(bib_disabled),
+        'photo_count': format_big_integer(photo_stats['total_count']),
+        'photo_total_size': human_file_size(photo_stats['total_size']),
+        'bib_photo_count': format_big_integer(bib_photo_count),
+        'face_photo_count': format_big_integer(face_photo_count)
     }
 
     return render(request, 'web_admin/event_view.html', context)

@@ -8,9 +8,9 @@
     <h4>Cloud Storage URLs</h4>
     <ul>
         {% for url in cloud_urls %}
-            <li><a href="{{ url }}" target="_blank">{{ url }}</a></li>
+        <li><a href="{{ url }}" target="_blank">{{ url }}</a></li>
         {% empty %}
-            <li>No cloud storage URLs available.</li>
+        <li>No cloud storage URLs available.</li>
         {% endfor %}
     </ul>
 
