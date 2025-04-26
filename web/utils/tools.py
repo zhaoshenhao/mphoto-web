@@ -49,7 +49,7 @@ def format_big_integer(n):
 def detect_url_type(url):
     if url.startswith('https://drive.google.com/drive/'):
         return 1 # Google Drive
-    if url.startswith('https://photos.app.goo.gl/'):
+    if url.startswith('https://photos.google.com/lr/album'):
         return 2 # Google Photos
     return 1
 
