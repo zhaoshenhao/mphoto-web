@@ -9,7 +9,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from .models import Bib, Event
 from .utils.auth import user_has_event_permission
-from .utils.tools import get_events, generate_unique_code
+from .utils.tools import get_events, generate_unique_code, get_dt_params
 from .forms import BibForm
 from datetime import timedelta, date
 
@@ -47,16 +47,8 @@ def create_or_edit_bib(request, bib_id=None):
 @require_POST
 @csrf_exempt
 def bibs_data(request):
-    draw = int(request.POST.get("draw", 1))
-    start = int(request.POST.get("start", 0))
-    length = int(request.POST.get("length", 10))
+    draw, start, length, search_value, order = get_dt_params(request)
     event_id = request.POST.get("event_id")
-    search_value = request.POST.get("search[value]", "").strip()
-
-    order_column_idx = request.POST.get("order[0][column]")
-    order_column = request.POST.get(f"columns[{order_column_idx}][data]", "id")
-    order_dir = request.POST.get("order[0][dir]", "asc")
-    order = f"{'' if order_dir == 'asc' else '-'}{order_column}"
 
     queryset = Bib.objects.select_related('event')
     if request.user.role != 'admin':

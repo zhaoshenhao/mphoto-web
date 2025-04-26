@@ -6,6 +6,7 @@ from typing import List
 from deepface import DeepFace
 from web.models import FacePhoto, BibPhoto
 from pgvector.django import CosineDistance
+from .tools import get_links
 
 logger = logging.getLogger(__name__)
 
@@ -69,10 +70,11 @@ def merge_photos(data, l):
     for i in l:
         if i['photo__gdid'] in data:
             return
+        tl, dl = get_links(l['photo__storage_type'], l['photo__gdid'], l['photo__base_url'])
         data[i['photo__gdid']] = {
             'name': i['photo__name'],
-            'thumb_link': f'https://drive.google.com/thumbnail?id={i['photo__gdid']}&sz=w300',
-            'download_link': f"https://drive.google.com/uc?id={i['photo__gdid']}&export=download"
+            'thumb_link': tl,
+            'download_link': dl,
         }
 
 
@@ -102,5 +104,5 @@ def search_bib(data, bib_number, event_id):
         qs1 = BibPhoto.objects.filter(event_id=event_id, bib_number=bib_number,
                                       confidence__gt=settings.BIB_CONFIDENCE).order_by(
             'photo__name')
-    l = list(qs1[:settings.MAX_ROWS].values('photo__gdid', 'photo__name'))
+    l = list(qs1[:settings.MAX_ROWS].values('photo__gdid', 'photo__name', 'photo__storage_type', 'photo__base_url'))
     merge_photos(data, l)

@@ -96,10 +96,12 @@ class Photo(models.Model):
     last_updated = models.DateTimeField(auto_now=True)
     size = models.IntegerField()
     gdid = models.CharField(max_length=100)
+    base_url = models.TextField(blank=True, null=True)
     created_time = models.DateTimeField()
     modified_time = models.DateTimeField()
     cloud_storage = models.ForeignKey(CloudStorage, models.DO_NOTHING)
     status =  models.SmallIntegerField(choices=STATUS_CHOICES)
+    storage_type = models.SmallIntegerField(default=1)
 
     class Meta:
         managed = False

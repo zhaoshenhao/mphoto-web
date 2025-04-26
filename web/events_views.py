@@ -9,7 +9,7 @@ from django.views.decorators.http import require_POST
 from .models import Event, CloudStorage, Bib, Photo, BibPhoto, FacePhoto, EventManager
 from .forms import EventForm
 from .utils.auth import user_has_event_permission
-from .utils.tools import human_file_size, format_big_integer
+from .utils.tools import human_file_size, format_big_integer, get_dt_params
 
 
 logger = logging.getLogger(__name__)
@@ -27,15 +27,7 @@ def event_list(request):
 @csrf_exempt
 @login_required
 def events_data(request):
-    draw = int(request.POST.get("draw", 1))
-    start = int(request.POST.get("start", 0))
-    length = int(request.POST.get("length", 25))
-    search_value = request.POST.get("search[value]", "").strip()
-
-    order_column_idx = request.POST.get("order[0][column]")
-    order_column = request.POST.get(f"columns[{order_column_idx}][data]", "id")
-    order_dir = request.POST.get("order[0][dir]", "asc")
-    order = f"{'' if order_dir == 'asc' else '-'}{order_column}"
+    draw, start, length, search_value, order = get_dt_params(request)
 
     queryset = Event.objects.all()
     if request.user.role != 'admin':

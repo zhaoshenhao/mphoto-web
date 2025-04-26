@@ -13,6 +13,7 @@ from rest_framework.decorators import api_view
 from .models import Event, EventManager, CloudStorage, Photo, BibPhoto, FacePhoto
 from .utils.auth import require_api_key, user_has_event_permission
 from .utils.search import search_bib, search_face, get_embeddings
+from .utils.tools import detect_url_type, detect_url_type_name
 
 
 logger = logging.getLogger(__name__)
@@ -69,6 +70,8 @@ def api_cloud_storage_detail(request, cloud_storage_id):
         'id': cs.id,
         'event_id': cs.event_id,
         'url': cs.url,
+        'storage_type': detect_url_type(cs.url),
+        'storage_type_name': detect_url_type_name(cs.url),
         'recursive': cs.recursive,
         'description': cs.description,
         'photo': {
@@ -104,7 +107,7 @@ def api_list_photos(request, cloud_storage_id):
     else:
         ps = qs.order_by('-id')
     if fmt == 'compact':
-        data = list(ps.values('id', 'name', 'last_updated', 'size', 'gdid', 'modified_time', 'status'))
+        data = list(ps.values('id', 'name', 'last_updated', 'size', 'gdid', 'modified_time', 'status', 'storage_type', 'base_url'))
     else:
         data = list(ps.values())
     return JsonResponse(data, safe=False)
@@ -114,6 +117,7 @@ def api_list_photos(request, cloud_storage_id):
 def api_save_photos(request, cloud_storage_id):
     cloud_storage = get_object_or_404(CloudStorage, id=cloud_storage_id)
     user_has_event_permission(request.api_user, cloud_storage)
+    storage_type = detect_url_type(cloud_storage.url)
     try:
         only_new = json.loads(request.body)
         new_list = []
@@ -126,6 +130,8 @@ def api_save_photos(request, cloud_storage_id):
                 created_time = f['created_time'],
                 modified_time = f['modified_time'],
                 cloud_storage = cloud_storage,
+                base_url = f['base_url'],
+                storage_type = storage_type,
                 status = 0
             )
             new_list.append(p)
@@ -176,6 +182,7 @@ def api_add_photos_result(request, photo_id):
     user_has_event_permission(request.api_user, photo)
     try:
         data = json.loads(request.body)
+        photo_size = data['photo_size']
         bib_photos: Dict = data['bib_photos']
         bp_list = []
         for b in bib_photos:
@@ -214,6 +221,8 @@ def api_add_photos_result(request, photo_id):
         }
         logger.info("Update photo status")
         photo.status = 1 # Completed
+        if photo.storage_type == 2: # Update size for google photo
+            photo.size = photo_size
         photo.save()
         return JsonResponse(ret_data, status=200)
     except Exception as e:

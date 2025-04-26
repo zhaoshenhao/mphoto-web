@@ -7,10 +7,10 @@ from django.views.decorators.http import require_POST
 from django.shortcuts import get_object_or_404, render
 from .models import BibPhoto
 from .utils.auth import user_has_event_permission
-from .utils.tools import get_events
+from .utils.tools import get_events, get_dt_params
+
 
 logger = logging.getLogger(__name__)
-
 
 @login_required
 def bib_photos(request):
@@ -24,22 +24,12 @@ def bib_photos(request):
 @require_POST
 @csrf_exempt
 def bib_photos_data(request):
-    draw = int(request.POST.get('draw', 1))
-    start = int(request.POST.get('start', 0))
-    length = int(request.POST.get('length', 10))
+    draw, start, length, search_value, order = get_dt_params(request)
     event_id = request.POST.get('event_id')
-    search_value = request.POST.get('search[value]', '').strip()
-
-    order_column_idx = request.POST.get("order[0][column]")
-    order_column = request.POST.get(f"columns[{order_column_idx}][data]", "id")
-    order_dir = request.POST.get("order[0][dir]", "asc")
-    order = f"{'' if order_dir == 'asc' else '-'}{order_column}"
-
     queryset = BibPhoto.objects.select_related('photo', 'event')
-
     if request.user.role != 'admin':
         queryset = queryset.filter(event__eventmanager__user=request.user)
-    
+
     if event_id:
         queryset = queryset.filter(event_id=event_id)
 
