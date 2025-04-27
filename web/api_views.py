@@ -9,7 +9,9 @@ from django.shortcuts import get_object_or_404
 from django.utils.timezone import now
 from django.views.decorators.http import require_GET
 from django.views.decorators.csrf import csrf_exempt
+from django_postgres_extra.manager import PostgresManager
 from rest_framework.decorators import api_view
+
 from .models import Event, EventManager, CloudStorage, Photo, BibPhoto, FacePhoto
 from .utils.auth import require_api_key, user_has_event_permission
 from .utils.search import search_bib, search_face, get_embeddings
@@ -136,7 +138,7 @@ def api_save_photos(request, cloud_storage_id):
             )
             new_list.append(p)
             logger.info(f'Add new photo: {f["name"]} / {f["gdid"]}')
-        Photo.objects.bulk_create(new_list)
+        Photo.objects.bulk_create(new_list, ignore_conflicts=True)
         return JsonResponse({'message': f'{len(new_list)} photos saved'}, status=201)
     except Exception as e:
         logger.error(e)
@@ -197,7 +199,7 @@ def api_add_photos_result(request, photo_id):
         logger.info("Delete old bib photos")
         bp_del_cnt, type_counts = BibPhoto.objects.filter(photo=photo).delete()
         logger.info("Save bib photos")
-        BibPhoto.objects.bulk_create(bp_list)
+        BibPhoto.objects.bulk_create(bp_list, ignore_conflicts=True)
         fp_list = []
         face_photos: Dict = data['face_photos']
         for f in face_photos:
@@ -212,7 +214,7 @@ def api_add_photos_result(request, photo_id):
         logger.info("Delete old face photos")
         fp_del_cnt, type_counts = FacePhoto.objects.filter(photo=photo).delete()
         logger.info("Save face photos")
-        FacePhoto.objects.bulk_create(fp_list)
+        FacePhoto.objects.bulk_create(fp_list, ignore_conflicts=True)
         ret_data = {
             'bib_photo_added': len(bib_photos),
             'bib_photo_delete': bp_del_cnt,
