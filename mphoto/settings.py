@@ -158,3 +158,6 @@ FACE_DETECTOR = 'yunet' # opencv, yunet, ssd, mtcnn, retinaface
 FACE_ALIGNMENT = True
 MAX_ROWS = 100
 
+# Google Photo Token
+GPHOTO_CRED_JSON = 'gphoto_cred.json'
+GPHOTO_TOKEN_JSON = 'gphoto_token.json'

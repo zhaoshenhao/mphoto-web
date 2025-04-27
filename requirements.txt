@@ -11,3 +11,6 @@ deepface==0.0.93
 tf-keras
 gunicorn
 opencv-python-headless
+google-api-python-client
+google-auth
+google-auth-oauthlib

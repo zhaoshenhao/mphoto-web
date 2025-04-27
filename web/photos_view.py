@@ -7,7 +7,7 @@ from django.shortcuts import render, get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from .models import Photo
-from .utils.tools import get_events, get_photo_links, get_dt_params
+from .utils.tools import get_events, get_view_link, get_dt_params
 from .utils.auth import user_has_event_permission
 
 logger = logging.getLogger(__name__)
@@ -47,14 +47,14 @@ def photos_data(request):
 
     data = []
     for p in queryset:
-        _, dl = get_photo_links(p)
         data.append({
             'event__name': p.event.name,
+            'cloud_storage_id': p.cloud_storage_id,
             'cloud_storage__url': p.cloud_storage.url,
             'id': p.id,
             'name': p.name,
             'gdid': p.gdid,
-            'full': dl,
+            'full': get_view_link(p),
             'size': p.size,
             'status': Photo.STATUS_CHOICES[p.status][1],
             'modified_time': p.modified_time.strftime('%Y-%m-%d %H:%M:%S'),

@@ -145,3 +145,5 @@ cython_debug/
 
 .vscode/
 .idea/
+/gphoto_token.json
+/gphoto_cred.json

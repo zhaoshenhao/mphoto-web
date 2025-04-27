@@ -221,7 +221,9 @@ def api_add_photos_result(request, photo_id):
         }
         logger.info("Update photo status")
         photo.status = 1 # Completed
+        logger.info(f"Photo size: {photo_size}")
         if photo.storage_type == 2: # Update size for google photo
+            logger.info(f"Update photo size: {photo_size}")
             photo.size = photo_size
         photo.save()
         return JsonResponse(ret_data, status=200)

@@ -70,7 +70,7 @@ def merge_photos(data, l):
     for i in l:
         if i['photo__gdid'] in data:
             return
-        tl, dl = get_links(l['photo__storage_type'], l['photo__gdid'], l['photo__base_url'])
+        tl, dl = get_links(i['photo__storage_type'], i['photo__gdid'], i['photo__base_url'], True)
         data[i['photo__gdid']] = {
             'name': i['photo__name'],
             'thumb_link': tl,
@@ -89,7 +89,9 @@ def search_face(data, embedding, event_id):
         distance__lt=max_distance
     ).order_by('distance')[:settings.MAX_ROWS].values(
         'photo__gdid',
-        'photo__name'
+        'photo__name',
+        'photo__storage_type',
+        'photo__base_url'
     )
     l = list(face_matches)
     merge_photos(data, l)

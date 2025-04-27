@@ -6,7 +6,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from django.shortcuts import get_object_or_404, render
 from .models import FacePhoto
-from .utils.tools import get_events, get_photo_links, get_dt_params
+from .utils.tools import get_events, get_view_link, get_dt_params
 from .utils.auth import user_has_event_permission
 
 
@@ -49,7 +49,6 @@ def face_photos_data(request):
 
     data = []
     for bp in queryset:
-        tl, dl = get_photo_links(bp.photo)
         data.append({
             'event_id': bp.event_id,
             'event__name': bp.event.name,
@@ -57,8 +56,7 @@ def face_photos_data(request):
             'photo_id': bp.photo_id,
             'confidence': f"{bp.confidence:.2f}",
             'photo__name': bp.photo.name,
-            'photo__thumb_link': tl,
-            'photo__content_link': dl,
+            'photo__content_link': get_view_link(bp.photo),
             'photo__modified_time': bp.photo.modified_time,
             'photo__last_updated': bp.photo.last_updated.strftime('%Y-%m-%d %H:%M:%S'),
         })

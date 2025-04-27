@@ -61,14 +61,6 @@
                 { data: 'confidence' },
                 { data: 'photo__name' },
                 {
-                    data: "photo__thumb_link",
-                    orderable: false,
-                    searchable: false,
-                    render: function (data, type, row) {
-                        return `<a href="${data}" target="_blank"><span title="${data}">View</span></a>`;
-                    }
-                },
-                {
                     data: "photo__content_link",
                     orderable: false,
                     searchable: false,

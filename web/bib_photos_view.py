@@ -7,7 +7,7 @@ from django.views.decorators.http import require_POST
 from django.shortcuts import get_object_or_404, render
 from .models import BibPhoto
 from .utils.auth import user_has_event_permission
-from .utils.tools import get_events, get_dt_params
+from .utils.tools import get_events, get_dt_params, get_view_link
 
 
 logger = logging.getLogger(__name__)
@@ -51,8 +51,7 @@ def bib_photos_data(request):
         'photo_id': bp.photo_id,
         'confidence': f"{bp.confidence:.2f}",
         'photo__name': bp.photo.name,
-        'photo__thumb_link': f'https://drive.google.com/thumbnail?id={bp.photo.gdid}&sz=w300',
-        'photo__content_link': f'https://drive.google.com/file/d/{bp.photo.gdid}/view',
+        'photo__content_link': get_view_link(bp.photo),
         'photo__modified_time': bp.photo.modified_time,
         'photo__last_updated': bp.photo.last_updated.strftime('%Y-%m-%d %H:%M:%S'),
     } for bp in queryset]

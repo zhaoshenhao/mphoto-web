@@ -1,7 +1,14 @@
 import random
 from django.utils.timezone import now
 from ..models import Event, Photo
+import settings
+from google.oauth2 import credentials
+from googleapiclient.discovery import build
 
+def build_gphoto_service():
+    creds = credentials.Credentials.from_authorized_user_file(settings.GPHOTO_TOKEN_JSON, scopes=[
+        'https://www.googleapis.com/auth/photoslibrary.readonly'])
+    return build('photoslibrary', 'v1', credentials=creds, static_discovery=False)
 
 def get_dt_params(request):
     draw = int(request.POST.get('draw', 1))
@@ -61,16 +68,29 @@ def detect_url_type_name(url):
         return 'Google Photos'
     return 'Unknown'
 
-def get_links(storage_type, gdid, base_url):
+def get_links(storage_type, gdid, base_url, refresh: False):
     if storage_type == 1:
         return f'https://drive.google.com/thumbnail?id={gdid}&sz=w300', f"https://drive.google.com/uc?id={gdid}&export=download"
     if storage_type == 2:
-        return f"{base_url}=w300-h398", f"{base_url}=d"
+        if refresh:
+            base_url = get_base_url_by_id(gdid)
+            return f"{base_url}=w300-h398", f"{base_url}=d"
+        else:
+            return f"{base_url}=w300-h398", f"{base_url}=d"
     return '#', '#'
 
-def get_photo_links(p: Photo):
+def get_photo_links(p: Photo, refresh: False):
+    return get_links(p.storage_type, p.gdid, p.base_url, refresh)
+
+def get_view_link(p: Photo):
     if p.storage_type == 1:
-        return f'https://drive.google.com/thumbnail?id={p.gdid}&sz=w300', f"https://drive.google.com/uc?id={p.gdid}&export=download"
+        return f'https://drive.google.com/uc?export=view&id={p.gdid}'
     if p.storage_type == 2:
-        return f"{p.base_url}=w300-h398", f"{p.base_url}=d"
-    return '#', '#'
+        return p.base_url
+    return '#'
+
+
+def get_base_url_by_id(media_id):
+    service = build_gphoto_service()
+    ret = service.mediaItems().get(mediaItemId=media_id).execute()
+    return ret['baseUrl']
