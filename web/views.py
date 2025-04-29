@@ -13,7 +13,6 @@ logger = logging.getLogger(__name__)
 
 def home_view(request):
     events = get_all_events(request)
-    print(events)
     return render(request, 'web_admin/home.html', {
             'events': events,
             'page_title': 'MPhoto Search'

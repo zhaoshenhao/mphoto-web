@@ -161,3 +161,4 @@ MAX_ROWS = 100
 # Google Photo Token
 GPHOTO_CRED_JSON = 'gphoto_cred.json'
 GPHOTO_TOKEN_JSON = 'gphoto_token.json'
+RECAPTCHA_SECRET_KEY = '6LduOvsqAAAAAPo3BdzjXis-NHsB_M82oNkgVfxX'

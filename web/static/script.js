@@ -16,11 +16,7 @@ function updateCheckboxState() {
         const useCheckbox = document.getElementById(`use-${i}`);
         const hasImage = faceBox.querySelector("img") !== null;
         useCheckbox.disabled = !hasImage;
-        if (!hasImage) {
-            useCheckbox.checked = false;
-        } else {
-            useCheckbox.checked = true;
-        }
+        useCheckbox.checked = hasImage
     }
 }
 
@@ -53,7 +49,7 @@ function loadImage() {
 
 function copyToFace(index) {
     if (cropper) {
-        const canvas = cropper.getCroppedCanvas({ width: 215, height: 265 });
+        const canvas = cropper.getCroppedCanvas({width: 215, height: 265});
         const imgEl = document.createElement("img");
         imgEl.src = canvas.toDataURL();
         const faceBox = document.getElementById(`face-${index}`);
@@ -70,7 +66,32 @@ function copyToFace(index) {
     }
 }
 
+async function executeRecaptcha() {
+    const recaptchaResponse = window.grecaptcha ? grecaptcha.getResponse() : '';
+    if (!window.__CF$cv$params && !recaptchaResponse) {
+        Swal.fire({
+            title: "CAPTCHA Required",
+            text: "Please complete the CAPTCHA to proceed.",
+            icon: "warning",
+            confirmButtonText: "OK"
+        });
+        return null;
+    }
+    return recaptchaResponse
+}
+
 async function submitFaces() {
+    const recaptchaResponse = window.grecaptcha ? grecaptcha.getResponse() : '';
+    if (!window.__CF$cv$params && !recaptchaResponse) {
+        Swal.fire({
+            title: "CAPTCHA Required",
+            text: "Please complete the CAPTCHA to proceed.",
+            icon: "warning",
+            confirmButtonText: "OK"
+        });
+        return;
+    }
+
     const images = Array.from(document.querySelectorAll(".face-box img"))
         .map((img, index) => ({
             src: img.src,
@@ -84,11 +105,11 @@ async function submitFaces() {
     if (!eventId) return Swal.fire("Missing Event", "Please select an event.", "warning");
     if (!/^\d{1,6}$/.test(bib) && images.length === 0) return Swal.fire("Invalid Input", "Please enter a valid bib number or select at least one face.", "warning");
     if (!/^\d{1,6}$/.test(bib)) {
-        const result = await Swal.fire({ title: "No Bib", text: "Send only image search?", showCancelButton: true });
+        const result = await Swal.fire({title: "No Bib", text: "Send only image search?", showCancelButton: true});
         if (!result.isConfirmed) return;
     }
     if (images.length === 0) {
-        const { value: action } = await Swal.fire({
+        const {value: action} = await Swal.fire({
             title: "No faces selected",
             html: "Press <b>Continue</b> to search photos<br>Press <b>Add</b> to add or use face image",
             icon: "warning",
@@ -110,16 +131,18 @@ async function submitFaces() {
     const payload = {
         event_id: parseInt(eventId),
         bib_number: bib,
-        images: images
+        images: images,
+        recaptcha_token: recaptchaResponse
     };
-
+    const loadingIndicator = document.getElementById('loading-indicator');
+    loadingIndicator.style.display = 'flex';
     const response = await fetch(`/mphoto/api/search/`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {"Content-Type": "application/json"},
         body: JSON.stringify(payload)
     });
     const data = await response.json();
-
+    loadingIndicator.style.display = 'none';
     if (data.error) {
         await Swal.fire({
             title: "Error",
@@ -135,35 +158,32 @@ async function submitFaces() {
     displayThumbs();
     document.getElementById("submit-faces").disabled = true;
     setTimeout(() => document.getElementById("submit-faces").disabled = false, 5000);
+    grecaptcha.reset();
 }
 
 function createDownloadLink(dl, name) {
-  const p = document.createElement('p');
-  const link = document.createElement('a');
-  link.href = dl;
-  link.classList.add('btn', 'btn-primary', 'btn-sm', 'mt-2')
-  const span = document.createElement('span');
-  span.textContent = ' ' + name;
-  const icon = document.createElement('i');
-  icon.classList.add('fa-solid', 'fa-download');
-  link.appendChild(icon)
-  link.appendChild(span)
-  p.appendChild(link)
-  return p;
+    const p = document.createElement('p');
+    const link = document.createElement('a');
+    link.href = dl;
+    link.classList.add('btn', 'btn-primary', 'btn-sm', 'mt-2')
+    const span = document.createElement('span');
+    span.textContent = ' ' + name;
+    const icon = document.createElement('i');
+    icon.classList.add('fa-solid', 'fa-download');
+    link.appendChild(icon)
+    link.appendChild(span)
+    p.appendChild(link)
+    return p;
 }
 
 function displayThumbs() {
     const grid = document.getElementById("thumbs-grid");
-    const controlsTop = document.getElementById("thumbnail-controls-top");
-    const controlsBottom = document.getElementById("thumbnail-controls-bottom");
     const totalPhotos = document.getElementById("total-photos");
 
     grid.innerHTML = "";
 
     if (thumbs.length === 0) {
         totalPhotos.textContent = "No photos found for the bib and face uploaded.";
-        controlsTop.style.display = "none";
-        controlsBottom.style.display = "none";
     } else {
         totalPhotos.textContent = `Total photos found: ${thumbs.length}`;
         thumbs.forEach(p => {
@@ -179,8 +199,6 @@ function displayThumbs() {
             grid.appendChild(div);
         });
     }
-    controlsTop.style.display = "block";
-    controlsBottom.style.display = "block";
 }
 
 window.onload = () => {
@@ -188,12 +206,12 @@ window.onload = () => {
 };
 
 document.addEventListener("DOMContentLoaded", () => {
-  $('#event-select').select2({
-    placeholder: 'Select Event...',
-    allowClear: true,
-    minimumInputLength: 0, // Allow search with any input
-    width: '100%', // Match Bootstrap form-control width
-    theme: 'bootstrap-5' // Align with Bootstrap 5 styling
-  });
+    $('#event-select').select2({
+        placeholder: 'Select Event...',
+        allowClear: true,
+        minimumInputLength: 0, // Allow search with any input
+        width: '100%', // Match Bootstrap form-control width
+        theme: 'bootstrap-5' // Align with Bootstrap 5 styling
+    });
 });
 

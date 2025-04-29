@@ -14,3 +14,4 @@ opencv-python-headless
 google-api-python-client
 google-auth
 google-auth-oauthlib
+requests

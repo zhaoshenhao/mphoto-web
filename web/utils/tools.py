@@ -1,4 +1,6 @@
+import logging
 import random
+import requests
 from django.utils.timezone import now
 from ..models import Event, Photo
 import settings
@@ -94,3 +96,14 @@ def get_base_url_by_id(media_id):
     service = build_gphoto_service()
     ret = service.mediaItems().get(mediaItemId=media_id).execute()
     return ret['baseUrl']
+
+def verify_recaptcha(token, secret_key):
+    url = 'https://www.google.com/recaptcha/api/siteverify'
+    data = {
+        'secret': secret_key,  #  Your reCAPTCHA secret key (server-side!)
+        'response': token
+    }
+    response = requests.post(url, data=data)
+    result = response.json()
+    logging.info(result)
+    return result.get('success', False)

@@ -9,13 +9,13 @@ from django.shortcuts import get_object_or_404
 from django.utils.timezone import now
 from django.views.decorators.http import require_GET
 from django.views.decorators.csrf import csrf_exempt
-from django_postgres_extra.manager import PostgresManager
 from rest_framework.decorators import api_view
 
+import settings
 from .models import Event, EventManager, CloudStorage, Photo, BibPhoto, FacePhoto
 from .utils.auth import require_api_key, user_has_event_permission
 from .utils.search import search_bib, search_face, get_embeddings
-from .utils.tools import detect_url_type, detect_url_type_name
+from .utils.tools import detect_url_type, detect_url_type_name, verify_recaptcha
 
 
 logger = logging.getLogger(__name__)
@@ -238,6 +238,9 @@ def api_add_photos_result(request, photo_id):
 def search_photo(request,):
     try:
         data = json.loads(request.body)
+        recaptcha_token = data['recaptcha_token']
+        if not verify_recaptcha(recaptcha_token, settings.RECAPTCHA_SECRET_KEY):  # Replace with your secret key
+            return JsonResponse({'error': 'Invalid reCAPTCHA'}, status=400)
         event_id = data['event_id']
         try:
             Event.objects.get(id=event_id)
