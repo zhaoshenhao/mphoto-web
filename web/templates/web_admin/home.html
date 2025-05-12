@@ -24,7 +24,12 @@
 </head>
 <body>
 <div class="container">
-    <h1>MPhoto</h1>
+    <div class="row">
+    <div class="col" style="flex: 0 0 70%; max-width: 70%;"><h1>MPhoto</h1></div>
+    <div class="col text-end" style="flex: 0 0 30%; max-width: 30%;">
+        <a href="{% static 'intro.html' %}" target="_blank" rel="noopener noreferrer" >介绍</a>
+    </div>
+        </div>
     <div class="tabs">
         <button onclick="showTab(0)" id="tab1" class="active">Face Input</button>
         <button onclick="showTab(1)" id="tab2" disabled>Thumbnails</button>

@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MPhoto 介绍</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f7f6;
+            color: #333;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 30px auto;
+            padding: 25px 40px;
+            background-color: #ffffff;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        h1, h2, h3 {
+            color: #2c3e50;
+            margin-top: 1.5em;
+            margin-bottom: 0.8em;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2.8em;
+            margin-bottom: 1em;
+            color: #1a5276;
+        }
+
+        h2 {
+            font-size: 2em;
+            border-bottom: 2px solid #e0e0e0;
+            padding-bottom: 0.3em;
+        }
+
+        h3 {
+            font-size: 1.6em;
+            color: #34495e;
+        }
+
+        p {
+            margin-bottom: 1.2em;
+            text-align: justify;
+        }
+
+        a {
+            color: #2980b9;
+            text-decoration: none;
+        }
+
+        a:hover, a:focus {
+            text-decoration: underline;
+            color: #1f618d;
+        }
+
+        ul, ol {
+            margin-bottom: 1.2em;
+            padding-left: 25px;
+        }
+
+        li {
+            margin-bottom: 0.6em;
+        }
+
+        ul ul, ol ol {
+            margin-top: 0.5em;
+            margin-bottom: 0.5em;
+        }
+
+        strong {
+            font-weight: 700;
+            color: #c0392b; /* A slightly alarming color for emphasis */
+        }
+
+        code {
+            font-family: 'Courier New', Courier, monospace;
+            background-color: #ecf0f1;
+            padding: 0.2em 0.4em;
+            border-radius: 4px;
+            font-size: 0.9em;
+            color: #2c3e50;
+        }
+
+        /* Special styling for "须知" sections for better emphasis */
+        h3:contains("须知"), p strong:first-child:contains("须知") {
+             /* The p strong selector is a bit tricky, might need adjustment if structure changes */
+            color: #e74c3c;
+        }
+
+        ol > li > strong:first-child, ul > li > strong:first-child {
+            color: #555; /* Default strong color if not "须知" or "重要" */
+        }
+
+        li > strong:first-child:contains("重要的事情") {
+             color: #d35400; /* Specific color for "重要的事情" */
+        }
+
+        /* Improve blockquote-like appearance for notes within lists */
+        ul li ul, ol li ul, ol li ol {
+            background-color: #f9f9f9;
+            border-left: 3px solid #bdc3c7;
+            padding: 10px 15px;
+            margin-left: -15px; /* Adjust to align with parent list item */
+            border-radius: 4px;
+        }
+
+        /* Specific styling for the "须知" list items in "照片搜索" */
+        h2:contains("照片搜索") + ol > li:last-child > ul {
+            background-color: #fff5f5; /* Lighter red background for these notes */
+            border-left-color: #e74c3c;
+        }
+         /* Specific styling for the "须知" list items in "摄影师和活动组织者" */
+        h3:contains("须知：") + ol > li > ul {
+            background-color: #fef9e7; /* Lighter yellow/orange background for these notes */
+            border-left-color: #f39c12;
+        }
+
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>MPhoto 照片搜索</h1>
+
+        <h2>简介</h2>
+        <p>作为一个马拉松爱好者，我们有一个热情互助的社区。每次比赛，总有很多摄影师为我们拍摄了大量的照片。一场大型赛事，照片数量可能高达一两万张。在这样大的照片里找到自己或特定人的照片变得非常耗时。这个小工具就是为了解决这个痛点。</p>
+
+        <h2>架构</h2>
+        <p>这个工具由三个部分组成：</p>
+        <ol>
+            <li>第三方的照片存储，目前只支持 Google Drive 和 Google Photo。但强烈建议使用 Google Drive。因为 Google Photo 是一款个人消费级产品，在服务器端使用会面临很多限制。一旦API调用超过限制，我们的服务就会失败，我们必须等待次日再使用。</li>
+            <li>分布式的照片处理程序。这个程序安装在IT志愿者的电脑上，帮助我们处理照片，并发送处理结果到服务端。</li>
+            <li>服务端提供了照片搜索和后台管理的网页界面。</li>
+        </ol>
+
+        <h2>照片搜索</h2>
+        <ol>
+            <li>首先访问网页地址： <a href="https://www.compusky.com/mphoto/" target="_blank" rel="noopener noreferrer">https://www.compusky.com/mphoto/</a> 。</li>
+            <li>在 <code>Face Input</code> 下面，选择一个您参与的 <code>Event</code>。</li>
+            <li>输入您的 <code>Bib</code> 号码。</li>
+            <li>输入您的头像。您最多可以使用3个头像。注意：
+                <ul>
+                    <li>您无需使用其他照片编辑软件预先裁剪头像；</li>
+                    <li>您可以选择一个电脑中的照片，然后使用网页内嵌的裁剪工具，选择头像</li>
+                    <li>您最多可以选择三个头像。</li>
+                    <li>为了提高匹配准确度，建议您：
+                        <ul>
+                            <li>使用比赛当日的头像。</li>
+                            <li>使用不同角度的头像以匹配不同角度的照片。</li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+            <li>可以只使用 <code>Bib</code> 或头像，但二者必须有一个。</li>
+            <li>每次提交，您必须点击 Google 的 reCAPCHA，服务器在搜索照片后，页面进入 <code>Thumbnail</code>。</li>
+            <li>每次最多只能返回100张照片</li>
+            <li>返回的照片缩略图，您可以根据需要，点击下载原图。</li>
+            <li><strong>须知</strong>：
+                <ul>
+                    <li>所有的照片都保存在摄影师分享出来的云存储上。我们的服务器并不保存照片。</li>
+                    <li>下载链接直接指向了云存储上的原始照片。<strong>如果您发现照片分辨率不足，请直接联系摄影师获取更高分辨率的照片。</strong></li>
+                    <li>遗憾的是，我们也不知道摄影师是谁。所以只能祝您好运。</li>
+                    <li>国内的用户，受有关网络限制，您可能无法使用我们的服务。请自行解决科学上网。</li>
+                </ul>
+            </li>
+        </ol>
+
+        <h2>摄影师和活动组织者</h2>
+
+        <h3>须知：</h3>
+        <ol>
+            <li><strong>重要的事情</strong>：强烈建议使用 Google Drive 进行照片分享。<strong>不要使用 Google Photo</strong>，这款服务不适合这样大规模的照片搜索
+                <ul>
+                    <li>Google Photo 的照片分享，处理方式复杂，我们会放在最后处理，且花费更长时间</li>
+                    <li>在日活跃高的日子，Google Photo 分享出来的照片，会遇到无法显示、下载的问题。目前没有任何付费、免费的解决方法。<strong>这个不是 Bug，请不要联系我们解决。</strong></li>
+                </ul>
+            </li>
+            <li>摄影师请务必分享您的 Google Drive 目录。</li>
+            <li>Google Drive 分享目录可以有子目录。</li>
+            <li>这个应用支持很多照片分享链接</li>
+            <li>所有的照片需要进行预处理，才能被搜索到。根据不同的电脑性能，处理1000张照片，需要20-60分钟时间。</li>
+            <li>Google Photo 需要额外的手工步骤来获取内部的分享链接。</li>
+        </ol>
+
+        <h3>如何处理照片 - 让我们来为您服务</h3>
+        <ol>
+            <li>所以在您分享照片后，请务必告诉我们您的分享链接，让我们进行处理。</li>
+            <li>您可以添加新照片到已经分享过的目录，并通知我们，我们的程序会处理新添加的照片，您在分享目录里删除的照片，程序也会删除相关记录。</li>
+            <li>我们会使用自己的电脑和GPU处理每张照片，并且把处理结果上传到服务器。</li>
+        </ol>
+
+        <h3>如何处理照片 - 自助服务</h3>
+        <p><strong>须知：</strong>本方法目前只支持 Google Drive。Google Photo 由于其特殊性，并不适用。</p>
+        <ol>
+            <li>申请一个免费账号</li>
+            <li>设置 API key</li>
+            <li>创建一个活动/<code>Event</code></li>
+            <li>添加 <code>CloudStorageURL</code></li>
+            <li>安装照片处理程序：
+                <ul>
+                    <li>您需要一台性能出色的电脑，或者搭载了一块比较新的 GPU，比如 <code>30xx</code> 系列。</li>
+                    <li>您需要一定的 Python/Conda 使用能力。</li>
+                    <li>如果您熟悉 Windows WSL，您可以在 Linux 下运行，这是目前最稳定的使用方式。</li>
+                    <li>程序也支持在 Windows 下直接运行。</li>
+                    <li>本程序没有在 MacOS 下测试过。</li>
+                </ul>
+            </li>
+            <li>熟悉 <code>mphoto</code> 工具，并在每次添加照片后，调用处理程序。</li>
+        </ol>
+    </div>
+</body>
+</html>
