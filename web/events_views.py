@@ -9,7 +9,7 @@ from django.views.decorators.http import require_POST
 from .models import Event, CloudStorage, Bib, Photo, BibPhoto, FacePhoto, EventManager
 from .forms import EventForm
 from .utils.auth import user_has_event_permission
-from .utils.tools import human_file_size, format_big_integer, get_dt_params
+from .utils.tools import human_file_size, format_big_integer, get_dt_params, get_cloud_storage_stats
 
 
 logger = logging.getLogger(__name__)
@@ -133,7 +133,23 @@ def view_event(request, event_id):
     event = get_object_or_404(Event, id=event_id)
     user_has_event_permission(request.user, event)
 
-    cloud_urls = CloudStorage.objects.filter(event=event).values_list('url', flat=True)
+    queryset = CloudStorage.objects.filter(event=event).order_by('id')
+    cloud_storages = []
+    for cs in queryset:
+        photo_count, photo_size, photo_new, photo_done, photo_update, bib_photo_count, face_photo_count = get_cloud_storage_stats(cs)
+        cloud_storages.append(
+            {
+                'id': cs.id,
+                'url': cs.url,
+                'photo_count': format_big_integer(photo_count),
+                'photo_size': human_file_size(photo_size),
+                'photo_new': format_big_integer(photo_new),
+                'photo_done': format_big_integer(photo_done),
+                'photo_update': format_big_integer(photo_update),
+                'bib_photo_count': format_big_integer(bib_photo_count),
+                'face_photo_count': format_big_integer(face_photo_count)
+            }
+        )
 
     bibs = Bib.objects.filter(event=event)
     bib_total = bibs.count()
@@ -149,7 +165,7 @@ def view_event(request, event_id):
 
     context = {
         'event': event,
-        'cloud_urls': cloud_urls,
+        'cloud_storages': cloud_storages,
         'bib_total': format_big_integer(bib_total),
         'bib_enabled': format_big_integer(bib_enabled),
         'bib_disabled': format_big_integer(bib_disabled),

@@ -7,8 +7,19 @@
 
     <h4>Cloud Storage URLs</h4>
     <ul>
-        {% for url in cloud_urls %}
-        <li><a href="{{ url }}" target="_blank">{{ url }}</a></li>
+        {% for cs in cloud_storages %}
+        <li>
+            <a href="{{ url }}" target="_blank">{{ cs.url }}</a>
+            <ul>
+                <li>Total photos: {{ cs.photo_count }}</li>
+                <li>Total size: {{ cs.photo_size }}</li>
+                <li>New photos: {{ cs.photo_new }}</li>
+                <li>Changed photos: {{ cs.photo_update }}</li>
+                <li>Proceeded photos: {{ cs.photo_done }}</li>
+                <li>Bib Photos: {{ cs.bib_photo_count }}</li>
+                <li>Face Photos: {{ cs.face_photo_count }}</li>
+            </ul>
+        </li>
         {% empty %}
         <li>No cloud storage URLs available.</li>
         {% endfor %}

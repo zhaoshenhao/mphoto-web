@@ -2,10 +2,12 @@ import logging
 import random
 import requests
 from django.utils.timezone import now
-from ..models import Event, Photo
+from django.db.models import Q, Count, Sum
+from ..models import Event, Photo, BibPhoto, FacePhoto
 import settings
 from google.oauth2 import credentials
 from googleapiclient.discovery import build
+
 
 def build_gphoto_service():
     creds = credentials.Credentials.from_authorized_user_file(settings.GPHOTO_TOKEN_JSON, scopes=[
@@ -40,6 +42,8 @@ def get_all_events(request):
     return Event.objects.filter(enabled=True, expiry__gt=now()).order_by('name')
 
 def human_file_size(num, si=False, dp=1):
+    if not num:
+        return "0B"
     thresh = 1000 if si else 1024
     if abs(num) < thresh:
         return f"{num} B"
@@ -53,6 +57,8 @@ def human_file_size(num, si=False, dp=1):
     return f"{num:.{dp}f} {units[u]}"
 
 def format_big_integer(n):
+    if not n:
+        return "0"
     return "{:,}".format(n)
 
 def detect_url_type(url):
@@ -91,7 +97,6 @@ def get_view_link(p: Photo):
         return p.base_url
     return '#'
 
-
 def get_base_url_by_id(media_id):
     service = build_gphoto_service()
     ret = service.mediaItems().get(mediaItemId=media_id).execute()
@@ -107,3 +112,15 @@ def verify_recaptcha(token, secret_key):
     result = response.json()
     logging.info(result)
     return result.get('success', False)
+
+def get_cloud_storage_stats(cs):
+    photo_new = Photo.objects.filter(cloud_storage=cs, status=0).count()
+    photo_done = Photo.objects.filter(cloud_storage=cs, status=1).count()
+    photo_update = Photo.objects.filter(cloud_storage=cs, status=2).count()
+    photo_stats = Photo.objects.filter(cloud_storage=cs).aggregate(
+        total_count=Count('id'),
+        total_size=Sum('size')
+    )
+    bib_photo_count = BibPhoto.objects.filter(photo__cloud_storage=cs).count()
+    face_photo_count = FacePhoto.objects.filter(photo__cloud_storage=cs).count()
+    return photo_stats['total_count'], photo_stats['total_size'], photo_new, photo_done, photo_update, bib_photo_count, face_photo_count
