@@ -1,4 +1,6 @@
 # Byte-compiled / optimized / DLL files
+mphoto/__pycache__/
+web/__pycache__/
 __pycache__/
 *.py[cod]
 *$py.class
